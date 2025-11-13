@@ -26,7 +26,10 @@ public:
     {
         if (sz == 0 || size > MAX_VECTOR_SIZE)
             throw out_of_range("Vector size should be greater than zero");
-        pMem = new T[sz]();// {}; // У типа T д.б. констуктор по умолчанию
+        pMem = new T[sz]();
+        if (pMem == nullptr) {
+            throw std::string("No memory allocated");
+        }
     }
     TDynamicVector(T* arr, size_t s) : sz(s)
     {
@@ -54,25 +57,19 @@ public:
     TDynamicVector& operator=(const TDynamicVector& v)
     {
         if (this != &v) {
-            delete[] pMem;
-            sz = v.sz;
-            pMem = new T[sz];
-            std::copy(v.pMem, v.pMem + v.sz, this->pMem);
-        }
+            TDynamicVector temp(v); 
+            this->swap(temp);     
+        }                          
         return *this;
     }
     TDynamicVector& operator=(TDynamicVector&& v) noexcept
     {
         if (this != &v) {
-            delete[] pMem;
-            sz = v.sz;
-            pMem = v.pMem;
-            v.sz = 0;
-            v.pMem = nullptr;
+            TDynamicVector temp(std::move(v)); 
+            this->swap(temp);                  
         }
         return *this;
     }
-
 
     size_t size() const noexcept { return sz; }
 
@@ -103,7 +100,7 @@ public:
     {
         if (sz == v.sz) {
             for (int i = 0; i < sz; ++i) {
-                if (pMem[i] != v.pMem[i]) return false;
+                if !(*this == v) return false;
             }
             return true;
         }
@@ -149,10 +146,10 @@ public:
     // векторные операции
     TDynamicVector operator+(const TDynamicVector& v)
     {
-        TDynamicVector<T> res(*this);
-        if (res.sz != v.sz) {
+        if (sz != v.sz) {
             throw std::string("LOGIC ERROR");
         }
+        TDynamicVector<T> res(*this);
         for (int i = 0; i < sz; i++) {
             res.pMem[i] += v.pMem[i];
         }

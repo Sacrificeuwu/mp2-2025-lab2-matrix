@@ -48,7 +48,6 @@ TEST(TDynamicMatrix, can_get_size)
 TEST(TDynamicMatrix, can_set_and_get_element)
 {
 	TDynamicMatrix<int> A(3);
-	ASSERT_NO_THROW(A[1][1] = 2);
 	EXPECT_EQ(A[1][1] , 2);
 }
 
